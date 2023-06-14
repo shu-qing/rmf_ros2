@@ -13,6 +13,7 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(yaml-cpp REQUIRED)
+find_package(Threads REQUIRED)
 if(DEFINED ENV{RMF_ENABLE_FAILOVER})
   if($ENV{RMF_ENABLE_FAILOVER} EQUAL 1)
     find_package(stubborn_buddies REQUIRED)
@@ -56,6 +57,7 @@ if(BUILD_TESTING)
   ament_uncrustify(
     include src test rmf_rxcpp/include rmf_rxcpp/src rmf_rxcpp/test
     CONFIG_FILE ${uncrustify_config_file}
+    LANGUAGE C++
     MAX_LINE_LENGTH 80
   )
 endif()
@@ -268,6 +270,7 @@ target_link_libraries(experimental_lift_watchdog
     ${rclcpp_LIBRARIES}
     ${rmf_fleet_msgs_LIBRARIES}
     ${std_msgs_LIBRARIES}
+    Threads::Threads
 )
 
 target_include_directories(experimental_lift_watchdog
@@ -347,13 +350,6 @@ rclcpp_components_register_nodes(robot_state_aggregator_main
 
 set(node_plugins "${node_plugins}RobotStateAggregator;
     $<TARGET_FILE:robot_state_aggregator_main>\n")
-
-# since the package installs libraries without exporting them
-# it needs to make sure that the library path is being exported
-if(NOT WIN32)
-  ament_environment_hooks(
-    "${ament_cmake_package_templates_ENVIRONMENT_HOOK_LIBRARY_PATH}")
-endif()
 
 add_executable(robot_state_aggregator
   src/robot_state_aggregator/main.cpp
