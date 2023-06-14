@@ -211,8 +211,8 @@ LegacyTask::StatusMsg DispenseItem::ActivePhase::_get_status(
 void DispenseItem::ActivePhase::_do_publish()
 {
   rmf_dispenser_msgs::msg::DispenserRequest msg{};
-  msg.request_guid = _request_guid;
-  msg.target_guid = _target;
+  msg.request_guid = *(_context->current_task_id());
+  msg.target_guid = _context->name();
   msg.transporter_type = _transporter_type;
   msg.items = _items;
   _context->node()->dispenser_request()->publish(msg);
