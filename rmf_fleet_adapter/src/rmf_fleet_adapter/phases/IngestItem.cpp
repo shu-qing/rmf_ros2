@@ -211,7 +211,7 @@ void IngestItem::ActivePhase::_do_publish()
 {
   rmf_ingestor_msgs::msg::IngestorRequest msg{};
   msg.request_guid = *(_context->current_task_id());
-  msg.target_guid = _context->name();
+  msg.target_guid = _context->name() + "_" + _target;
   msg.transporter_type = _transporter_type;
   msg.items = _items;
   _context->node()->ingestor_request()->publish(msg);
